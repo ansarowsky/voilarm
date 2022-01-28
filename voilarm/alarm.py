@@ -10,8 +10,8 @@ class Alarm:
         self._used = False
 
     def cancel_alarm(self):
-        if self._used == False:
-            raise RuntimeError('The alarm has not been scheduled')
+        if self._timer == None:
+            raise RuntimeError('The alarm is not scheduled')
         self._timer.cancel()
 
     def schedule(self, hour, minute, day=None, month=None, year=None):
@@ -30,9 +30,12 @@ class Alarm:
             self._dtalarm += timedelta(days=1)
 
         delta_t = (self._dtalarm - dtnow).total_seconds()
-        self._timer = Timer(delta_t, Alarm._run)
+        self._timer = Timer(delta_t, self._run)
+        self._timer.start()
+        print('The alarm will activate in ' + str(int(delta_t // 3600)) +
+              ' hours, ' + str(int(delta_t // 60 % 60)) + ' minutes and ' + str(int(delta_t % 60)) + ' seconds.')
         self._used = True
 
-    @staticmethod
-    def _run():
+    def _run(self):
         print('elo')
+        self._timer = None
